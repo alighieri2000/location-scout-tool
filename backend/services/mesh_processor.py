@@ -56,7 +56,10 @@ def load_scan(file_path: str) -> dict[str, Any]:
 
     # ── FBX: transcode via open3d (trimesh cannot parse FBX) ──────────────────
     if ext == ".fbx":
-        import open3d as o3d
+        try:
+            import open3d as o3d
+        except ImportError:
+            raise ValueError("FBX support requires open3d, which is not installed in this deployment. Convert to GLB first.")
         o3d_mesh = o3d.io.read_triangle_mesh(str(path), enable_post_processing=True)
         if len(o3d_mesh.vertices) == 0:
             raise ValueError("FBX loaded 0 vertices — file may be empty or use unsupported features")
@@ -148,7 +151,10 @@ def load_scan(file_path: str) -> dict[str, Any]:
 
 def _load_pointcloud(file_path: str) -> dict[str, Any]:
     """Convert a point cloud to a simple mesh via ball-pivoting approximation."""
-    import open3d as o3d
+    try:
+        import open3d as o3d
+    except ImportError:
+        raise ValueError("Point cloud support requires open3d, which is not installed in this deployment.")
 
     pcd = o3d.io.read_point_cloud(file_path)
     pcd.estimate_normals()
@@ -307,7 +313,10 @@ def detect_planes(mesh_id: str) -> list[dict]:
     Each result has: type, normal, center, width, height, area, rotation, point_count.
     """
     import trimesh.sample as ts
-    import open3d as o3d
+    try:
+        import open3d as o3d
+    except ImportError:
+        raise ValueError("Auto-detect requires open3d, which is not installed in this deployment.")
 
     path = Path("outputs") / f"{mesh_id}.glb"
     if not path.exists():

@@ -1,7 +1,7 @@
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
 python-multipart==0.0.20
-trimesh[all]==4.5.3
+trimesh==4.5.3
 numpy==2.1.3
 Pillow==11.0.0
 fal-client==0.5.6
