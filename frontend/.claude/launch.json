@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "location-scout-frontend",
+      "runtimeExecutable": "C:\\Users\\dante\\AppData\\Local\\Programs\\nodejs-portable\\node-v22.16.0-win-x64\\npm.cmd",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    }
+  ]
+}
