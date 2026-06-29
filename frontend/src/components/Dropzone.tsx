@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import axios from 'axios'
 import { useSceneStore } from '../store/useSceneStore'
 
-const ACCEPTED = ['.obj', '.glb', '.gltf', '.usdz', '.ply', '.stl', '.pts', '.las', '.xyz']
+const ACCEPTED = ['.obj', '.glb', '.gltf', '.usdz', '.ply', '.stl', '.fbx', '.pts', '.las', '.xyz']
 
 export function Dropzone() {
   const { setMesh, setLoading, setError, isLoading } = useSceneStore()

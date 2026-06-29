@@ -54,21 +54,9 @@ def load_scan(file_path: str) -> dict[str, Any]:
 
     TARGET_FACES = 100_000
 
-    # ── FBX: transcode via open3d (trimesh cannot parse FBX) ──────────────────
+    # ── FBX: trimesh uses pyassimp automatically when installed ───────────────
     if ext == ".fbx":
-        try:
-            import open3d as o3d
-        except ImportError:
-            raise ValueError("FBX support requires open3d, which is not installed in this deployment. Convert to GLB first.")
-        o3d_mesh = o3d.io.read_triangle_mesh(str(path), enable_post_processing=True)
-        if len(o3d_mesh.vertices) == 0:
-            raise ValueError("FBX loaded 0 vertices — file may be empty or use unsupported features")
-        tmp_glb = path.with_suffix(".tmp.glb")
-        try:
-            o3d.io.write_triangle_mesh(str(tmp_glb), o3d_mesh)
-            loaded = trimesh.load(str(tmp_glb), process=False)
-        finally:
-            tmp_glb.unlink(missing_ok=True)
+        loaded = trimesh.load(str(path), process=False)
     else:
         # Do NOT use force="mesh" — that collapses the scene and strips materials/textures.
         loaded = trimesh.load(str(path), process=False)
