@@ -98,7 +98,7 @@ function ScanMesh({ url, dimmed, placementActive, onPlace }: ScanMeshProps) {
 // ─── Floor polygon (triangulated from room tracer outline) ───────────────────
 
 function FloorPolyObject({ shape }: { shape: PlacedShape }) {
-  const { selectedShapeId, selectShape, mode, gizmoMode, updateShape, setFloorY, wallHeight } = useSceneStore()
+  const { selectedShapeId, selectShape, mode, setFloorY, wallHeight } = useSceneStore()
   const isSelected = selectedShapeId === shape.id
   const meshRef = useRef<THREE.Mesh>(null!)
 
@@ -229,8 +229,8 @@ function PlanCamera({ center, bounds }: { center: [number,number,number]; bounds
   const { set, size, camera } = useThree()
 
   // Capture the original perspective camera on first render (before any swap)
-  const origCameraRef = useRef<THREE.Camera | null>(null)
-  if (origCameraRef.current === null) origCameraRef.current = camera
+  const origCameraRef = useRef<THREE.PerspectiveCamera | null>(null)
+  if (origCameraRef.current === null) origCameraRef.current = camera as THREE.PerspectiveCamera
 
   React.useEffect(() => {
     const origCamera = origCameraRef.current!
@@ -399,20 +399,6 @@ const planS: Record<string, React.CSSProperties> = {
   exportBtn:{ background: '#1a3a5c', border: '1px solid #2a5a8c', borderRadius: 6, color: '#7ac0ff', fontSize: 12, padding: '7px 14px', cursor: 'pointer', whiteSpace: 'nowrap' },
 }
 
-// ─── Orient gizmo ─────────────────────────────────────────────────────────────
-
-function OrientGizmo({ groupRef }: { groupRef: React.RefObject<THREE.Group> }) {
-  const { gizmoMode, setScanRotation, setScanPosition } = useSceneStore()
-
-  const onChange = useCallback(() => {
-    if (!groupRef.current) return
-    const { rotation: r, position: p } = groupRef.current
-    setScanRotation([r.x, r.y, r.z])
-    setScanPosition([p.x, p.y, p.z])
-  }, [groupRef, setScanRotation, setScanPosition])
-
-  return <TransformControls object={groupRef as React.RefObject<THREE.Object3D>} mode={gizmoMode} onObjectChange={onChange} />
-}
 
 // ─── Scene interior (has R3F context) ─────────────────────────────────────────
 
@@ -487,7 +473,7 @@ function SceneInterior({
       {/* Orient gizmo — render once group ref is populated */}
       {mode === 'orient' && scanGroupRef.current && (
         <TransformControls
-          object={scanGroupRef as React.RefObject<THREE.Object3D>}
+          object={scanGroupRef as unknown as React.MutableRefObject<THREE.Object3D>}
           mode={gizmoMode}
           onObjectChange={handleOrientChange}
         />

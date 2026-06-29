@@ -10,7 +10,7 @@ import { useSceneStore, PlacedShape } from '../store/useSceneStore'
 
 export function ShapePanel() {
   const {
-    mode, shapes, selectedShapeId, selectShape, removeShape, updateShape,
+    shapes, selectedShapeId, selectShape, removeShape, updateShape,
     textures, applyTextureToShape,
     patchResult, clearPatchResult,
     prompt, setPrompt,
