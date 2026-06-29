@@ -129,9 +129,12 @@ async def export_room_dxf_endpoint(req: ExportRoomDxfRequest):
 async def detect_planes_endpoint(req: DetectPlanesRequest):
     """
     Run RANSAC plane segmentation on the scan mesh.
-    Returns detected planes (floor, walls, ceiling) with center/rotation/scale ready for the frontend.
-    Runs in a thread pool since open3d RANSAC is CPU-bound.
+    Requires open3d — returns 501 if not installed (optional dependency).
     """
+    try:
+        import open3d  # noqa: F401
+    except ImportError:
+        raise HTTPException(status_code=501, detail="Auto-detect requires open3d, which is not installed in this deployment. Trace the room manually using the Plan tab.")
     import asyncio
     loop = asyncio.get_event_loop()
     try:
