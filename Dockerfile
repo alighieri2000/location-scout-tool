@@ -10,9 +10,9 @@ RUN npm run build
 FROM python:3.11-slim
 WORKDIR /app/backend
 
-# assimp: FBX, DAE, and other format support for trimesh
+# assimp-utils: provides the `assimp` CLI for FBX → OBJ transcoding
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        libassimp5 \
+        assimp-utils \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt .

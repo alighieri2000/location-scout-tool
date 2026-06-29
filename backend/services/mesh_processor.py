@@ -54,9 +54,21 @@ def load_scan(file_path: str) -> dict[str, Any]:
 
     TARGET_FACES = 100_000
 
-    # ── FBX: trimesh uses pyassimp automatically when installed ───────────────
+    # ── FBX: transcode to OBJ via assimp CLI, then load with trimesh ─────────
     if ext == ".fbx":
-        loaded = trimesh.load(str(path), process=False)
+        import subprocess
+        tmp_obj = path.with_suffix(".tmp.obj")
+        try:
+            result = subprocess.run(
+                ["assimp", "export", str(path), str(tmp_obj)],
+                capture_output=True, text=True, timeout=120,
+            )
+            if result.returncode != 0:
+                raise ValueError(f"FBX conversion failed: {result.stderr or result.stdout}")
+            loaded = trimesh.load(str(tmp_obj), process=False)
+        finally:
+            tmp_obj.unlink(missing_ok=True)
+            path.with_suffix(".tmp.mtl").unlink(missing_ok=True)
     else:
         # Do NOT use force="mesh" — that collapses the scene and strips materials/textures.
         loaded = trimesh.load(str(path), process=False)
