@@ -9,6 +9,11 @@ export function Dropzone() {
   const [isDragging, setIsDragging] = useState(false)
 
   const upload = useCallback(async (file: File) => {
+    const ext = '.' + file.name.split('.').pop()?.toLowerCase()
+    if (!ACCEPTED.includes(ext)) {
+      setError(`Unsupported file type: ${ext}. Please export as .glb or .obj from your scan app.`)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
